@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+
+
+
+<launch>
+
+<node name="rviz" pkg="rviz" type="rviz" output="screen"/>
+
+<include file="/home/wbw/catkin_ws/src/velodyne/velodyne_pointcloud/launch/VLP16_points.launch"/>
+
+<node pkg="velodyne_height_map" type="heightmap_node" name="heightmap_node"/>
+
+ <node pkg="but_velodyne_proc" type="laser_scan" name="but_velodyne_proc_laserscan_node" output="screen">
+    <remap from="points_in" to="/velodyne_points" />
+    <remap from="scan_out" to="/scan" />
+    <param name="min_z" value="0.0" />
+    <param name="max_z" value="10.0" />
+    <param name="angular_res" value="0.01" />
+    <param name="min_range" value="-1" />
+    <param name="frame_id" value="/velodyne" />
+  </node>
+
+   <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser" 
+	    args="0.0 0.0 0.0 0.0 0.0 0.0 /base_link /velodyne 50">                                                  
+   </node>
+
+  <node pkg="hector_mapping" type="hector_mapping" name="hector_mapping" output="screen">
+	<param name="map_pub_period" value="1"/>
+    <!-- My adding -->
+    <param name="scan_topic" value="scan"/>
+	<param name="pub_odometry" value="true"/>
+
+    <!-- Frame names -->
+    <param name="map_frame" value="map" />
+    <param name="base_frame" value="base_link" />
+    <param name="odom_frame" value="base_link" />
+    
+    <!-- Tf use -->
+    <param name="use_tf_scan_transformation" value="true"/>
+    <param name="use_tf_pose_start_estimate" value="false"/>
+    <param name="pub_map_odom_transform" value="true"/>
+    
+    <!-- Map size / start point -->
+    <param name="map_resolution" value="0.050"/>
+    <param name="map_size" value="4096"/>
+    <param name="map_start_x" value="0.5"/>
+    <param name="map_start_y" value="0.5" />
+    <param name="map_multi_res_levels" value="5" />
+    
+    <!-- Map update parameters -->
+    <param name="update_factor_free" value="0.4"/>
+    <param name="update_factor_occupied" value="0.9" />    
+    <param name="map_update_distance_thresh" value="0.4"/>
+    <param name="map_update_angle_thresh" value="0.06" />
+    <param name="laser_z_min_value" value = "-1.0" />
+    <param name="laser_z_max_value" value = "1.0" />
+	<param name="map_pub_period" value = "0.5" />
+    
+    <!-- Advertising config --> 
+    <param name="advertise_map_service" value="true"/>
+    <param name="scan_subscriber_queue_size" value="5"/>
+    <param name="tf_map_scanmatch_transform_frame_name" value="scanmatcher_frame" />
+
+  </node>
+
+  <node pkg="hector_trajectory_server" type="hector_trajectory_server" name="hector_trajectory_server" output="screen">
+    <param name="target_frame_name" type="string" value="map" />
+    <param name="source_frame_name" type="string" value="base_link" />
+    <param name="trajectory_update_rate" type="double" value="5" />
+    <param name="trajectory_publish_rate" type="double" value="4.5" />
+  </node>
+
+<param name="/use_sim_time" value="true"/>
+    
+  </node>
+
+</launch>
+  
+  
