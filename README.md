@@ -19,4 +19,5 @@ Ceres (optimization library developed by Google, similar to G2O): http://ceres-s
 
 ## Demo:
 Click to watch video
+
 [![Click to watch video](https://img.youtube.com/vi/LwrdPRxHzrg/hqdefault.jpg)](https://www.youtube.com/watch?v=LwrdPRxHzrg)
